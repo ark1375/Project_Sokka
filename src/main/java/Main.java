@@ -64,10 +64,8 @@ public final class Main {
 			edges.add(new Line(p.get(i),p.get(i+1)));
 		edges.add(new Line(p.get(p.size()-1), p.get(0)));
 		Line ray=new Line(x, criticalVertex);
-		System.out.println("ray="+ray);
 		for(Line l:edges)
 		{
-			System.out.println(l);
 			intersections.add(Line.intersection(l, ray));
 		}
 		System.out.println("before removing invalid vertecies");

@@ -35,19 +35,17 @@ public class Line {
 		}
 		if(l1.isVertical)
 		{
-			System.out.println("case 1");
 			double x=l1.x;
 			double y=x*l2.slope+l2.Yintercept;
 			return new Point2D.Double(x, y);
 		}
 		else if(l2.isVertical)
 		{
-			System.out.println("case 2");
 			double x=l2.x;
 			double y=x*l1.slope+l1.Yintercept;
 			return new Point2D.Double(x, y);
 		}
-		System.out.println("case 3");
+	
 		double x=(l1.Yintercept-l2.Yintercept)/(l2.slope-l1.slope);
 		double y=x*l1.slope+l1.Yintercept;
 		return new Point2D.Double(x, y);
