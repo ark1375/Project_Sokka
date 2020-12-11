@@ -31,76 +31,138 @@
 		 * 
 		 * return counter;
 		 */
+import java.applet.Applet;
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.List;
+import javafx.scene.canvas.GraphicsContext;
+
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
-public final class Main {
+
+import javax.swing.JFrame;
+public final class Main extends JFrame {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
 		
-		  Point2D.Double v1=new Double(0, 0); Point2D.Double v2=new Double(1, 0);
-		  Point2D.Double v3=new Double(0.5,0.5); Point2D.Double v4=new Double(1, 1);
-		  Point2D.Double v5=new Double(0, 1); Point2D.Double x=new Double(0.7,0.8);
-		  ArrayList<Point2D.Double> p=new ArrayList<Point2D.Double>(); p.add(v1);
-		  p.add(v2); p.add(v3); p.add(v4); p.add(v5);
-		
-		 System.out.println(isCritical(x, v3, v2, v4));
-		 
-		intersectionPoints(p, v2, x);
+		  Point2D.Double v1=new Double(346, 499);
+		  Point2D.Double v2=new Double(539, 511);
+		  Point2D.Double v3=new Double(544,365);
+		  Point2D.Double v4=new Double(666, 281);
+		  Point2D.Double v5=new Double(523, 190);
+		  Point2D.Double v6=new Double(743, 156);
+		  Point2D.Double v7=new Double(713, 302);
+		  Point2D.Double v8=new Double(862,406);
+		  Point2D.Double v9=new Double(883, 164);
+		  Point2D.Double v10=new Double(572, 104);
+		  Point2D.Double v11=new Double(411, 130);
+		  Point2D.Double v12=new Double(285,191);
+		  Point2D.Double v13=new Double(286, 364);
+		  Point2D.Double v14=new Double(373, 342);
+		  Point2D.Double v15=new Double(378, 246);
+		  Point2D.Double v16=new Double(473, 262);
+		  Point2D.Double v17=new Double(476, 356);
+		  Point2D.Double x=new Double(502,421);
+		  ArrayList<Point2D.Double> p=new ArrayList<Point2D.Double>();
+		  p.add(v1); p.add(v2); p.add(v3); p.add(v4); p.add(v5);p.add(v6);p.add(v7);p.add(v8);
+		  p.add(v9);p.add(v10);p.add(v11);p.add(v12);p.add(v13);p.add(v14);p.add(v15);p.add(v16);p.add(v17);
+		 ArrayList<Point2D.Double> criticalVertecies=new ArrayList<Point2D.Double>();
+		 if(isCritical(x, p.get(0), p.get(p.size()-1), p.get(1)))
+		 {
+			 criticalVertecies.add(p.get(0));
+		 }
+		 if(isCritical(x, p.get(p.size()-1), p.get(p.size()-2), p.get(0)))
+		 {
+			 criticalVertecies.add(p.get(p.size()));
+	
+		 }
+		 for(int i=1;i<p.size()-1;i++)
+		 {
+			if(isCritical(x, p.get(i), p.get(i-1), p.get(i+1)))
+			{
+				criticalVertecies.add(p.get(i));
+			}
+		 }
+		 DrawPolygon dp=new DrawPolygon(p,criticalVertecies,x);
+		 dp.main(p,criticalVertecies,x);
+		 for(int i=0;i<criticalVertecies.size();i++)
+		 {
+			 intersectionPoints(p, criticalVertecies.get(i), x);
+		 }
+		//intersectionPoints(p, v2, x);
 	}
-	public static boolean isCritical(Point2D.Double transmitterLocation,Point2D.Double currentEdge,Point2D.Double previousEdge,Point2D.Double nextEdge)
+	public static boolean isCritical(Point2D.Double transmitterLocation,Point2D.Double currentVertex,Point2D.Double previousVertex,Point2D.Double nextVertex)
 	{
-		double slope=(currentEdge.y-transmitterLocation.y)/(currentEdge.x-transmitterLocation.x);   //calculating slope of xv_i vector 
-		double previousEdgeHalfPlane=previousEdge.y-currentEdge.y-slope*(previousEdge.x-currentEdge.x); ///calculating if v_i-1 is on + or - half-plane
-		double nextEdgeHalfPlane=nextEdge.y-currentEdge.y-slope*(nextEdge.x-currentEdge.x);    ///////calculating if v_i+1 is on + or - half-plane
-		return (previousEdgeHalfPlane*nextEdgeHalfPlane>0);		///it means both were above or below half-plane and they are critical 
+		double slope=(currentVertex.y-transmitterLocation.y)/(currentVertex.x-transmitterLocation.x);   //calculating slope of xv_i vector 
+		double previousVertexHalfPlane=previousVertex.y-currentVertex.y-slope*(previousVertex.x-currentVertex.x); ///calculating if v_i-1 is on + or - half-plane
+		double nextVertexHalfPlane=nextVertex.y-currentVertex.y-slope*(nextVertex.x-currentVertex.x);    ///////calculating if v_i+1 is on + or - half-plane
+		return (previousVertexHalfPlane*nextVertexHalfPlane>0);		///it means both were above or below half-plane and therefore critical 
 	}
 	public static ArrayList<Point2D.Double> intersectionPoints(ArrayList<Point2D.Double> p,Point2D.Double criticalVertex,Point2D.Double x)
 	{
+		
+		////print blocks in this method is just for debugging and should be removed...
 		ArrayList<Line> edges = new ArrayList<Line>();
+		ArrayList<Point2D.Double> validIntersections=new ArrayList<Point2D.Double>();
 		ArrayList<Point2D.Double> intersections=new ArrayList<Point2D.Double>();
 		for(int i=0;i<p.size()-1;i++)
-			edges.add(new Line(p.get(i),p.get(i+1)));
-		edges.add(new Line(p.get(p.size()-1), p.get(0)));
+			edges.add(new Line(p.get(i),p.get(i+1)));     //// creates an array of lines containing edges of polygon using Line class
+		edges.add(new Line(p.get(p.size()-1), p.get(0)));    
 		Line ray=new Line(x, criticalVertex);
-		for(Line l:edges)
+		for(Line l:edges)     ///find the intersection of each edge "l" with ray(line) from x to critical edge
 		{
-			intersections.add(Line.intersection(l, ray));
+			intersections.add(Line.intersection(l, ray));   
 		}
-		System.out.println("before removing invalid vertecies");
-		for(int i=0;i<intersections.size();i++)
+
+		for(int i=0;i<intersections.size()-1;i++)
 		{
-			System.out.println(intersections.get(i));
+		if( intersections.get(i).x<=Math.max(p.get(i).x,p.get((i+1)%p.size()).x) && intersections.get(i).x>=Math.min(p.get(i).x,p.get((i+1)%p.size()).x))
+		{
+			validIntersections.add(intersections.get(i));
 		}
-		if(criticalVertex.x>x.x)
+		}
+		if(criticalVertex.x>x.x)   ////following if conditions removes non-valid intersection points where intersection happened before critical edge
 		{
-			for(int i=0;i<intersections.size();i++)
+			for(int i=0;i<validIntersections.size();i++)
 			{
-				if(intersections.get(i).x<criticalVertex.x)
+				if(validIntersections.get(i).x<criticalVertex.x )
 				{
-					intersections.remove(i);
+					validIntersections.remove(i);
 					i--;
 				}
 			}
 		}
 		else
 		{
-			for(int i=0;i<intersections.size();i++)
+			for(int i=0;i<validIntersections.size();i++)
 			{
-				if(intersections.get(i).x>criticalVertex.x)
+				if(validIntersections.get(i).x>criticalVertex.x)
 				{
-					intersections.remove(i);
+					validIntersections.remove(i);
 					i--;
 				}
 			}
 		}
-		System.out.println("after removing invalid vertecies");
-		for(int i=0;i<intersections.size();i++)
+		for(int i=0;i<validIntersections.size();i++)     /////////these two for blocks removes duplicates
 		{
-			System.out.println(intersections.get(i));
+			for(int j=i+1;j<validIntersections.size();j++)
+			{
+				if(validIntersections.get(i).equals(validIntersections.get(j)))
+				{
+					validIntersections.remove(j);
+				}
+			}
 		}
-		return intersections;
+		for(int i=0;i<validIntersections.size();i++)   
+		{
+			System.out.println(validIntersections.get(i));
+		}
+		
+		return validIntersections;
 	}
-	
+
 }
