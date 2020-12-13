@@ -43,6 +43,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
+import javax.sound.midi.Soundbank;
 import javax.swing.JFrame;
 public final class Main extends JFrame {
 	public static void main(String[] args) {
@@ -70,23 +71,9 @@ public final class Main extends JFrame {
 		  ArrayList<Point2D.Double> p=new ArrayList<Point2D.Double>();
 		  p.add(v1); p.add(v2); p.add(v3); p.add(v4); p.add(v5);p.add(v6);p.add(v7);p.add(v8);
 		  p.add(v9);p.add(v10);p.add(v11);p.add(v12);p.add(v13);p.add(v14);p.add(v15);p.add(v16);p.add(v17);
-		 ArrayList<Point2D.Double> criticalVertecies=new ArrayList<Point2D.Double>();
-		 if(isCritical(x, p.get(0), p.get(p.size()-1), p.get(1)))
-		 {
-			 criticalVertecies.add(p.get(0));
-		 }
-		 if(isCritical(x, p.get(p.size()-1), p.get(p.size()-2), p.get(0)))
-		 {
-			 criticalVertecies.add(p.get(p.size()));
-	
-		 }
-		 for(int i=1;i<p.size()-1;i++)
-		 {
-			if(isCritical(x, p.get(i), p.get(i-1), p.get(i+1)))
-			{
-				criticalVertecies.add(p.get(i));
-			}
-		 }
+		
+		 ArrayList<Point2D.Double> criticalVertecies=criticalVertecies(p, x);
+		 System.out.println(sortAngularly(criticalVertecies, x));
 		 DrawPolygon dp=new DrawPolygon(p,criticalVertecies,x);
 		 dp.main(p,criticalVertecies,x);
 		 for(int i=0;i<criticalVertecies.size();i++)
@@ -164,5 +151,109 @@ public final class Main extends JFrame {
 		
 		return validIntersections;
 	}
-
+	public static ArrayList<Point2D.Double> criticalVertecies(ArrayList<Point2D.Double> p,Point2D.Double x)
+	{
+		 ArrayList<Point2D.Double> criticalVertecies=new ArrayList<Point2D.Double>();
+		 if(isCritical(x, p.get(0), p.get(p.size()-1), p.get(1)))
+		 {
+			 criticalVertecies.add(p.get(0));
+		 }
+		 if(isCritical(x, p.get(p.size()-1), p.get(p.size()-2), p.get(0)))
+		 {
+			 criticalVertecies.add(p.get(p.size()));
+	
+		 }
+		 for(int i=1;i<p.size()-1;i++)
+		 {
+			if(isCritical(x, p.get(i), p.get(i-1), p.get(i+1)))
+			{
+				criticalVertecies.add(p.get(i));
+			}
+		 }
+		 return criticalVertecies;
+	}
+	public static ArrayList<Point2D.Double> sortAngularly(ArrayList<Point2D.Double> vertecies,Point2D.Double x)
+	{
+		ArrayList<Point2D.Double> firstQuarter=new ArrayList<Point2D.Double>();
+		ArrayList<Point2D.Double> secondQuarter=new ArrayList<Point2D.Double>();
+		ArrayList<Point2D.Double> thirdQuarter=new ArrayList<Point2D.Double>();
+		ArrayList<Point2D.Double> forthQuarter=new ArrayList<Point2D.Double>();
+		ArrayList<Point2D.Double> output=new ArrayList<Point2D.Double>();
+		///to sort point angularly around x absolute value of tangent isn't enough,we find which quarter point places
+		///by the following for
+		for(int i=0;i<vertecies.size();i++)
+		{
+			if(vertecies.get(i).x>=x.x && vertecies.get(i).y>=vertecies.get(i).y)
+				firstQuarter.add(vertecies.get(i));
+			else if(vertecies.get(i).x<=x.x && vertecies.get(i).y>=vertecies.get(i).y)
+				secondQuarter.add(vertecies.get(i));
+			else if(vertecies.get(i).x<=x.x && vertecies.get(i).y<=vertecies.get(i).y)
+				thirdQuarter.add(vertecies.get(i));
+			else 
+				forthQuarter.add(vertecies.get(i));
+		}
+	///absolute value of tangent is ascending descending ascending descending respective to the quarters so we do the following
+		firstQuarter=sortByTangent(firstQuarter, x, true);
+		secondQuarter=sortByTangent(secondQuarter, x, false);
+		thirdQuarter=sortByTangent(thirdQuarter, x, true);
+		forthQuarter=sortByTangent(forthQuarter, x, false);
+	///at the end we add all the quarters,origin of starting point doesn't matter,only the order of quarters matter
+		for(int i=0;i<firstQuarter.size();i++)
+			output.add(firstQuarter.get(i));
+		for(int i=0;i<secondQuarter.size();i++)
+			output.add(secondQuarter.get(i));
+		for(int i=0;i<thirdQuarter.size();i++)
+			output.add(thirdQuarter.get(i));
+		for(int i=0;i<forthQuarter.size();i++)
+			output.add(forthQuarter.get(i));
+		return output;
+	}
+	public static ArrayList<Point2D.Double> sortByTangent(ArrayList<Point2D.Double> input,Point2D.Double x, boolean ascending)
+	{
+	///sort points angularly with the respect to absolute value of the tangent with origin of x
+		///it uses bubble sort and probably could be improved...
+		Point2D.Double temp = new Point2D.Double(0,0);  
+	     if (ascending)
+		     {
+	         for(int i=0; i < input.size(); i++)
+	         		{  
+	                 for(int j=1; j < (input.size()-i); j++)
+	                 		{  
+	                          if(Math.abs((input.get(j-1).y-x.y)/(input.get(j-1).x-x.x)) > Math.abs((input.get(j).y-x.y)/(input.get(j).x-x.x)))
+							{  
+	                                 //swap elements  
+	                                 temp = input.get(j-1);  
+	                                 input.set(j-1,input.get(j)); 
+	                                 input.set(j,temp);  
+	                         }  
+	                          
+	                 		} 
+	                 
+	         		}  
+		     }
+	     else
+	     {
+	         for(int i=0; i < input.size(); i++)
+	         		{  
+	                 for(int j=1; j < (input.size()-i); j++)
+	                 		{  
+	                          if(Math.abs((input.get(j-1).y-x.y)/(input.get(j-1).x-x.x)) < Math.abs((input.get(j).y-x.y)/(input.get(j).x-x.x)))
+							{  
+	                                 //swap elements  
+	                                 temp = input.get(j-1);  
+	                                 input.set(j-1,input.get(j)); 
+	                                 input.set(j,temp);  
+	                         }  
+	                          
+	                 		} 
+	                 
+	         		}  
+		     }
+	     for(int i=0;i<input.size();i++)
+	     {
+	    	 System.out.println((input.get(i).y-x.y)/(input.get(i).x-x.x) );
+	     }
+	    return input;
+	}
 }
+
