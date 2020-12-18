@@ -249,10 +249,6 @@ public final class Main extends JFrame {
 	                 
 	         		}  
 		     }
-	     for(int i=0;i<input.size();i++)
-	     {
-	    	 System.out.println((input.get(i).y-x.y)/(input.get(i).x-x.x) );
-	     }
 	    return input;
 	}
 }
