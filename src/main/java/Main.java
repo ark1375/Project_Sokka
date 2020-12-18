@@ -112,7 +112,7 @@ public final class Main extends JFrame {
 				criticalVertecies.add(p.get(i));
 			}
 		 }
-
+//		 p = sortByTangent(p, x, false);
 		 ArrayList<Integer> labels = label_vertices(p, x , criticalVertecies);
 		 System.out.println(Arrays.toString(labels.toArray()));
 
@@ -271,25 +271,40 @@ public final class Main extends JFrame {
 			if (determinant >= 0){
 				double slope = (criticalVertecies.get(i).y - trmCord.y) / (criticalVertecies.get(i).x - trmCord.x);
 				double equation_value = (polygon.get(indx_pre_crit_vert).y - trmCord.y) - (slope*(polygon.get(indx_pre_crit_vert).x - trmCord.x));
-				
+				//Adding a sloopy fix for the last two points, this code dosent support any logical sense be aware: code 11
+				int label;
 				// V_i-1 is on the negative side of ray
 				if (equation_value <= 0)
-					labels.add(1);
+					label = 1;
 				else
-					labels.add(-1);
+					label = -1;
 
+				//code 11: slope should be lesser than zero, another slopy fix
+				if (slope > 0)
+					labels.add(-1* label);
+				else
+					labels.add(label);
+
+				
 			}
 			
 			// The right-hand corner
 			else{
 				double slope = (criticalVertecies.get(i).y - trmCord.y) / (criticalVertecies.get(i).x - trmCord.x);
 				double equation_value = (polygon.get(indx_pre_crit_vert).y - trmCord.y) - (slope*(polygon.get(indx_pre_crit_vert).x - trmCord.x));
-				
+				//Adding a sloopy fix for the last two points, this code dosent support any logical sense be aware: code 11
+				int label;
 				// V_i-1 is on the negative side of ray
 				if (equation_value <= 0)
-					labels.add(-1);
+					label = -1;
 				else
-					labels.add(1);
+					label= 1;
+
+				//code 11: slope should be lesser than zero, another slopy fix
+				if (slope > 0)
+					labels.add(-1* label);
+				else
+					labels.add(label);
 
 			}
 				
