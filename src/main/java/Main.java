@@ -231,6 +231,7 @@ public final class Main extends JFrame {
 
 			/* Report:
 				It detects the left turn and the righ turn accuratly
+				It has problem detecting the negative and positive side of xv_i ray
 			*/
 			
 			int indx_pre_crit_vert , indx_post_crit_vert;
