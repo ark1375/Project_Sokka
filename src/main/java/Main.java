@@ -301,7 +301,56 @@ public final class Main extends JFrame {
 	public static double distance(Point2D.Double a , Point2D.Double b){
 
 		return Math.sqrt( Math.pow(a.x - b.x , 2) + Math.pow(a.y - b.y , 2));
+		
+	}
 
+	public static ArrayList<Point2D.Double> sortByTangent(ArrayList<Point2D.Double> input,Point2D.Double x, boolean ascending)
+	{
+	///sort points angularly with the respect to absolute value of the tangent with origin of x
+		///it uses bubble sort and probably could be improved...
+		Point2D.Double temp = new Point2D.Double(0,0);  
+	     if (ascending)
+		     {
+	         for(int i=0; i < input.size(); i++)
+	         		{  
+	                 for(int j=1; j < (input.size()-i); j++)
+	                 		{  
+	                          if(Math.abs((input.get(j-1).y-x.y)/(input.get(j-1).x-x.x)) > Math.abs((input.get(j).y-x.y)/(input.get(j).x-x.x)))
+							{  
+	                                 //swap elements  
+	                                 temp = input.get(j-1);  
+	                                 input.set(j-1,input.get(j)); 
+	                                 input.set(j,temp);  
+	                         }  
+	                          
+	                 		} 
+	                 
+	         		}  
+		     }
+	     else
+	     {
+	         for(int i=0; i < input.size(); i++)
+	         		{  
+	                 for(int j=1; j < (input.size()-i); j++)
+	                 		{  
+	                          if(Math.abs((input.get(j-1).y-x.y)/(input.get(j-1).x-x.x)) < Math.abs((input.get(j).y-x.y)/(input.get(j).x-x.x)))
+							{  
+	                                 //swap elements  
+	                                 temp = input.get(j-1);  
+	                                 input.set(j-1,input.get(j)); 
+	                                 input.set(j,temp);  
+	                         }  
+	                          
+	                 		} 
+	                 
+	         		}  
+		     }
+	     for(int i=0;i<input.size();i++)
+	     {
+	    	 System.out.println((input.get(i).y-x.y)/(input.get(i).x-x.x) );
+	     }
+		return input;
+		
 	}
 
 }
