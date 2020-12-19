@@ -57,13 +57,22 @@ public final class Main extends JFrame {
 		// }
 		 DrawPolygon dp=new DrawPolygon(p,criticalVertecies,x);
 	//	 dp.main(p,criticalVertecies,x);
+		 ArrayList<Integer> intersectionLabels=new ArrayList<Integer>();
+		 ArrayList<Point2D.Double> allIntersections=new ArrayList<Point2D.Double>();
+		 ArrayList<Integer> allIntersectionLabels=new ArrayList<Integer>();
+		 ArrayList<Point2D.Double> temp=new ArrayList<Point2D.Double>();
 		 for(int i=0;i<criticalVertecies.size();i++)
 		 {
-			 System.out.println(i);
-			 intersectionPoints(p, criticalVertecies.get(i), x);
+			 temp=intersectionPoints(p, criticalVertecies.get(i), x,intersectionLabels);
+			 allIntersections.addAll(temp);
+			 allIntersectionLabels.addAll(intersectionLabels);
 		 }
-		//intersectionPoints(p, v2, x);
+		 for(int i=0;i<allIntersections.size();i++)
+		 {
+			 System.out.println(allIntersections.get(i)+"  "+allIntersectionLabels.get(i));
+		 }
 	}
+	
 	public static void criticalVertecies(Point2D.Double x,ArrayList<Point2D.Double> p,ArrayList<Point2D.Double> criticalVertecies, ArrayList<Integer> labels)
 	{
 		 if(isCritical(x, p.get(0), p.get(p.size()-1), p.get(1)))
@@ -93,13 +102,13 @@ public final class Main extends JFrame {
 		double nextVertexHalfPlane=nextVertex.y-currentVertex.y - slope*(nextVertex.x-currentVertex.x);    ///////calculating if v_i+1 is on + or - half-plane
 		return (previousVertexHalfPlane*nextVertexHalfPlane>0);		///it means both were above or below half-plane and therefore critical 
 	}
-	public static ArrayList<Point2D.Double> intersectionPoints(ArrayList<Point2D.Double> p,Point2D.Double criticalVertex,Point2D.Double x)
+	public static ArrayList<Point2D.Double> intersectionPoints(ArrayList<Point2D.Double> p,Point2D.Double criticalVertex,Point2D.Double x,ArrayList<Integer> labels)
 	{	
 		////print blocks in this method is just for debugging and should be removed...
 		ArrayList<Line> edges = new ArrayList<Line>();
 		ArrayList<Point2D.Double> validIntersections=new ArrayList<Point2D.Double>();
 		ArrayList<Point2D.Double> intersections=new ArrayList<Point2D.Double>();
-		ArrayList<Integer> labels=new ArrayList<Integer>();
+		
 		Point2D.Double temp=new Double();
 		for(int i=0;i<p.size()-1;i++)
 			edges.add(new Line(p.get(i),p.get(i+1)));     //// creates an array of lines containing edges of polygon using Line class
@@ -167,11 +176,7 @@ public final class Main extends JFrame {
 				}
 			}
 		}
-		for(int i=0;i<validIntersections.size();i++)   
-		{
-			System.out.println(validIntersections.get(i)+ " "+labels.get(i));
-
-		}
+	
 		return validIntersections;
 	}
                                      
