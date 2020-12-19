@@ -113,15 +113,15 @@ public final class Main extends JFrame {
 			}
 		 }
 //		 p = sortByTangent(p, x, false);
-		 ArrayList<Integer> labels = label_vertices(p, x , criticalVertecies);
-		 System.out.println(Arrays.toString(labels.toArray()));
-
+	//	 ArrayList<Integer> labels = label_vertices(p, x , criticalVertecies);
+	//	 System.out.println(Arrays.toString(labels.toArray()));
+		 System.out.println(labeling(x,v16,v15,v17));
 		 DrawPolygon dp=new DrawPolygon(p,criticalVertecies,x);
 		 dp.main(p,criticalVertecies,x);
-		 for(int i=0;i<criticalVertecies.size();i++)
-		 {
-			 intersectionPoints(p, criticalVertecies.get(i), x);
-		 }
+	//	 for(int i=0;i<criticalVertecies.size();i++)
+	//	 {
+	//		 intersectionPoints(p, criticalVertecies.get(i), x);
+	//	 }
 		//intersectionPoints(p, v2, x);
 	}
 
@@ -314,6 +314,19 @@ public final class Main extends JFrame {
 
 	}
 
+	public static int labeling(Point2D.Double x,Point2D.Double criticalVertex, Point2D.Double previousVertex, Point2D.Double nextVertex)
+	{
+		Boolean rightTurn=false;
+		Line PrToCr =new Line(previousVertex,criticalVertex);
+		rightTurn= (Math.signum(nextVertex.y-PrToCr.slope*nextVertex.x-PrToCr.Yintercept)>0);
+		System.out.println(rightTurn);
+		Line ray=new Line(x, criticalVertex);
+		int label= (int) Math.signum(previousVertex.y-ray.slope*previousVertex.x-ray.Yintercept);
+		if(rightTurn)
+			return label;
+		else 
+			return -label;
+	}
 	public static double distance(Point2D.Double a , Point2D.Double b){
 
 		return Math.sqrt( Math.pow(a.x - b.x , 2) + Math.pow(a.y - b.y , 2));
