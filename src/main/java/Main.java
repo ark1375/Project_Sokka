@@ -102,6 +102,7 @@ public final class Main extends JFrame {
 		double nextVertexHalfPlane=nextVertex.y-currentVertex.y - slope*(nextVertex.x-currentVertex.x);    ///////calculating if v_i+1 is on + or - half-plane
 		return (previousVertexHalfPlane*nextVertexHalfPlane>0);		///it means both were above or below half-plane and therefore critical 
 	}
+	
 	public static ArrayList<Point2D.Double> intersectionPoints(ArrayList<Point2D.Double> p,Point2D.Double criticalVertex,Point2D.Double x,ArrayList<Integer> labels)
 	{	
 		////print blocks in this method is just for debugging and should be removed...
@@ -298,6 +299,7 @@ public final class Main extends JFrame {
 		else 
 			return label;
 	}
+	
 	public static double distance(Point2D.Double a , Point2D.Double b){
 
 		return Math.sqrt( Math.pow(a.x - b.x , 2) + Math.pow(a.y - b.y , 2));
@@ -352,6 +354,152 @@ public final class Main extends JFrame {
 		return input;
 		
 	}
+
+	//ToDo: 'drMohammad'
+	// Using the two points 'A' and 'B' it must calculate the intersction points of the line crossing 'A' and 'B' with the polygon
+	public static ArrayList<Point2D.Double> intersectionPoints(ArrayList<Point2D.Double> polygon, Point2D.Double pointA , Point2D.Double pointB){
+		return null;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 
 }
 
