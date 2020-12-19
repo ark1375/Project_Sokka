@@ -184,20 +184,8 @@ public final class Main extends JFrame {
 
 		for ( int i=0 ; i < criticalVertecies.size() ; i++){
 
-			/* Hypothesis:
-				In this part we are determining if the v_i-1, v_i, v_i+1 is a right-hand or left-hand corner.
-				I suspect that considering the angle that this corner makes if the sin of this angle is 0 or positive,
-				this is a left-turn corner and if the sin is 0 or negative, the corner is a right-hand corner.
-
-				For that we use the law of cosin
-				Note: This didn't work because the corners with the angle greater than 180d are R-h but we cannot make a triangle with
-						an angle greater than 180d
-
-				Hypothesis 2: Using a linear equation we can determin if a point is above or below a line, so usign v_i and v_i-1
-				we create a linear equation (y = mx+b) and turn it into an inequality (y-mx-b <= 0 for the point's bellow the line
-				and y-mx-b >= 0 for the points above the line) using this inequlity we can determine if the third point is above or
-				bellow the line
-
+			/* 
+				Writne: Ark1375
 				Hypothesis 3: We can use the cross-product of the vectors v_i-1,v_i and v_i,v_i+1. This should indicate that the second
 				vector is on the right hand of the first vector (an RH turn) or in the left land of the first vector (a LH turn) 
 				Note that instead of the cross product we can also use the determinant of the below matrix
@@ -209,8 +197,7 @@ public final class Main extends JFrame {
 			*/
 
 			/* Report:
-				It detects the left turn and the righ turn accuratly
-				It has problem detecting the negative and positive side of xv_i ray
+				It works correctly
 			*/
 			
 			int indx_pre_crit_vert , indx_post_crit_vert;
