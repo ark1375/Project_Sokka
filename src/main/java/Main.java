@@ -1,36 +1,3 @@
-/*
-		 * ArrayList<Boolean> lineIntersections=new ArrayList<Boolean>();
-		 * ArrayList<Point2D.Double> clone=(ArrayList<Double>) p.clone();
-		 * clone.add(p.get(0)); /// making a closed loop for the next for loop double
-		 * ray1Slope; double ray2Slope; double edgeSlope; double x1; double x2; double
-		 * y1; double y2; double temp1=0; double temp2=0; int counter=0; for(int
-		 * i=0;i<p.size();i++) {
-		 * ray1Slope=(criticalEdge1.y-transmitterLocation.y)/(criticalEdge1.x-
-		 * transmitterLocation.x);
-		 * ray2Slope=(criticalEdge2.y-transmitterLocation.y)/(criticalEdge2.x-
-		 * transmitterLocation.x);
-		 * edgeSlope=(clone.get(i).y-clone.get(i+1).y)/(clone.get(i).x-clone.get(i+1).x)
-		 * ; x1=(criticalEdge1.y-transmitterLocation.y+ray1Slope*transmitterLocation.x-
-		 * edgeSlope*criticalEdge1.x)/(ray1Slope-edgeSlope);
-		 * y1=ray1Slope*(x1-transmitterLocation.x)+transmitterLocation.y;
-		 * x2=(criticalEdge2.y-transmitterLocation.y+ray2Slope*transmitterLocation.x-
-		 * edgeSlope*criticalEdge2.x)/(ray2Slope-edgeSlope);
-		 * y2=ray2Slope*(x2-transmitterLocation.x)+transmitterLocation.y;
-		 * System.out.println(x1+" "+y1); System.out.println(x2+" "+y2);
-		 * if(clone.get(i).x<clone.get(i+1).x) { temp1=clone.get(i).x;
-		 * temp2=clone.get(i+1).x; } else { temp1=clone.get(i+1).x;
-		 * temp2=clone.get(i).x; } if((ray1Slope>0 && transmitterLocation.x>x1 &&
-		 * transmitterLocation.x>x2) || (ray2Slope>0 && transmitterLocation.x>x1 &&
-		 * transmitterLocation.x>x2)) { lineIntersections.add(false); break; }
-		 * if((ray1Slope<0 && transmitterLocation.x<x1 && transmitterLocation.x<x2) ||
-		 * (ray2Slope<0 && transmitterLocation.x<x1 && transmitterLocation.x<x2)) {
-		 * lineIntersections.add(false); break; } lineIntersections.add((x1>temp1 &&
-		 * x1<temp2) || (x2>temp1 && x2<temp2)); } for(int
-		 * i=0;i<lineIntersections.size();i++) { if(lineIntersections.get(i)) counter
-		 * ++; }
-		 * 
-		 * return counter;
-		 */
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
@@ -82,8 +49,23 @@ public final class Main extends JFrame {
 
 		 ArrayList<Point2D.Double> criticalVertecies=new ArrayList<Point2D.Double>();
 		 ArrayList<Integer> labels=new ArrayList<Integer>();
-
-		//checking if the first and last nodes are count as critical vertecies
+		 criticalVertecies(x, p, criticalVertecies, labels);
+	//	 for(int i=0;i<criticalVertecies.size();i++)
+	//	 {
+		//	 System.out.print(criticalVertecies.get(i)+"   "+labels.get(i));
+		//	 System.out.println();
+		// }
+		 DrawPolygon dp=new DrawPolygon(p,criticalVertecies,x);
+	//	 dp.main(p,criticalVertecies,x);
+		 for(int i=0;i<criticalVertecies.size();i++)
+		 {
+			 System.out.println(i);
+			 intersectionPoints(p, criticalVertecies.get(i), x);
+		 }
+		//intersectionPoints(p, v2, x);
+	}
+	public static void criticalVertecies(Point2D.Double x,ArrayList<Point2D.Double> p,ArrayList<Point2D.Double> criticalVertecies, ArrayList<Integer> labels)
+	{
 		 if(isCritical(x, p.get(0), p.get(p.size()-1), p.get(1)))
 		 {
 			 criticalVertecies.add(p.get(0));
@@ -103,23 +85,7 @@ public final class Main extends JFrame {
 				labels.add(labeling(x, p.get(i), p.get(i-1), p.get(i+1)));
 			}
 		 }
-//		 p = sortByTangent(p, x, false);
-	//	 ArrayList<Integer> labels = label_vertices(p, x , criticalVertecies);
-	//	 System.out.println(Arrays.toString(labels.toArray()));
-		 for(int i=0;i<criticalVertecies.size();i++)
-		 {
-			 System.out.print(criticalVertecies.get(i)+"   "+labels.get(i));
-			 System.out.println();
-		 }
-		 DrawPolygon dp=new DrawPolygon(p,criticalVertecies,x);
-	//	 dp.main(p,criticalVertecies,x);
-	//	 for(int i=0;i<criticalVertecies.size();i++)
-	//	 {
-	//		 intersectionPoints(p, criticalVertecies.get(i), x);
-	//	 }
-		//intersectionPoints(p, v2, x);
 	}
-
 	public static boolean isCritical(Point2D.Double transmitterLocation,Point2D.Double currentVertex,Point2D.Double previousVertex,Point2D.Double nextVertex)
 	{
 		double slope=(currentVertex.y-transmitterLocation.y)/(currentVertex.x-transmitterLocation.x);   //calculating slope of xv_i vector 
@@ -127,28 +93,43 @@ public final class Main extends JFrame {
 		double nextVertexHalfPlane=nextVertex.y-currentVertex.y - slope*(nextVertex.x-currentVertex.x);    ///////calculating if v_i+1 is on + or - half-plane
 		return (previousVertexHalfPlane*nextVertexHalfPlane>0);		///it means both were above or below half-plane and therefore critical 
 	}
-
 	public static ArrayList<Point2D.Double> intersectionPoints(ArrayList<Point2D.Double> p,Point2D.Double criticalVertex,Point2D.Double x)
-	{
-		
+	{	
 		////print blocks in this method is just for debugging and should be removed...
 		ArrayList<Line> edges = new ArrayList<Line>();
 		ArrayList<Point2D.Double> validIntersections=new ArrayList<Point2D.Double>();
 		ArrayList<Point2D.Double> intersections=new ArrayList<Point2D.Double>();
+		ArrayList<Integer> labels=new ArrayList<Integer>();
+		Point2D.Double temp=new Double();
 		for(int i=0;i<p.size()-1;i++)
 			edges.add(new Line(p.get(i),p.get(i+1)));     //// creates an array of lines containing edges of polygon using Line class
 		edges.add(new Line(p.get(p.size()-1), p.get(0)));    
 		Line ray=new Line(x, criticalVertex);
+		double vjHalfPlane=0;
+		double viHalfPlane=0;
 		for(Line l:edges)     ///find the intersection of each edge "l" with ray(line) from x to critical edge
 		{
+			    ///added for not computing function two times 
+			   ////making sure we don't add criticalVertex as an intersection,we already have this...
 			intersections.add(Line.intersection(l, ray));   
 		}
-
-		for(int i=0;i<intersections.size()-1;i++)
+		for(int i=0;i<intersections.size();i++)
 		{
-		if( intersections.get(i).x<=Math.max(p.get(i).x,p.get((i+1)%p.size()).x) && intersections.get(i).x>=Math.min(p.get(i).x,p.get((i+1)%p.size()).x))
+		if( intersections.get(i).x<Math.max(p.get(i).x,p.get((i+1)%p.size()).x) && intersections.get(i).x>Math.min(p.get(i).x,p.get((i+1)%p.size()).x) && (Math.abs(intersections.get(i).x-criticalVertex.x)>0.0000001 || Math.abs(intersections.get(i).y-criticalVertex.y)>0.0000001))
 		{
 			validIntersections.add(intersections.get(i));
+			vjHalfPlane=p.get(i).y-ray.slope*p.get(i).x-ray.Yintercept;
+			int position=p.indexOf(criticalVertex); ///finding the position of critical vertex in polygon
+			if(position==0)
+				temp=p.get(p.size()-1);
+			else
+				temp=p.get(position-1);
+			viHalfPlane=temp.y-ray.slope*temp.x-ray.Yintercept;
+			if(viHalfPlane*vjHalfPlane>0)
+				labels.add(-2);
+			else
+				labels.add(2);
+			
 		}
 		}
 		if(criticalVertex.x>x.x)   ////following if conditions removes non-valid intersection points where intersection happened before critical edge
@@ -158,6 +139,7 @@ public final class Main extends JFrame {
 				if(validIntersections.get(i).x<criticalVertex.x )
 				{
 					validIntersections.remove(i);
+					labels.remove(i);
 					i--;
 				}
 			}
@@ -169,6 +151,7 @@ public final class Main extends JFrame {
 				if(validIntersections.get(i).x>criticalVertex.x)
 				{
 					validIntersections.remove(i);
+					labels.remove(i);
 					i--;
 				}
 			}
@@ -180,14 +163,15 @@ public final class Main extends JFrame {
 				if(validIntersections.get(i).equals(validIntersections.get(j)))
 				{
 					validIntersections.remove(j);
+					labels.remove(i);
 				}
 			}
 		}
 		for(int i=0;i<validIntersections.size();i++)   
 		{
-			System.out.println(validIntersections.get(i));
+			System.out.println(validIntersections.get(i)+ " "+labels.get(i));
+
 		}
-		
 		return validIntersections;
 	}
                                      
