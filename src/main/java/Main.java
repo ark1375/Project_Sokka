@@ -357,8 +357,70 @@ public final class Main extends JFrame {
 
 	//ToDo: 'drMohammad'
 	// Using the two points 'A' and 'B' it must calculate the intersction points of the line crossing 'A' and 'B' with the polygon
-	public static ArrayList<Point2D.Double> intersectionPoints(ArrayList<Point2D.Double> polygon, Point2D.Double pointA , Point2D.Double pointB){
-		return null;
+	public static ArrayList<Point2D.Double> intersectionPoints(ArrayList<Point2D.Double> p, Point2D.Double criticalVertex,Point2D.Double x)
+	{
+	////print blocks in this method is just for debugging and should be removed...
+			ArrayList<Line> edges = new ArrayList<Line>();
+			ArrayList<Point2D.Double> validIntersections=new ArrayList<Point2D.Double>();
+			ArrayList<Point2D.Double> intersections=new ArrayList<Point2D.Double>();
+			
+			Point2D.Double temp=new Double();
+			for(int i=0;i<p.size()-1;i++)
+				edges.add(new Line(p.get(i),p.get(i+1)));     //// creates an array of lines containing edges of polygon using Line class
+			edges.add(new Line(p.get(p.size()-1), p.get(0)));    
+			Line ray=new Line(x, criticalVertex);
+			double vjHalfPlane=0;
+			double viHalfPlane=0;
+			for(Line l:edges)     ///find the intersection of each edge "l" with ray(line) from x to critical edge
+			{
+				    ///added for not computing function two times 
+				   ////making sure we don't add criticalVertex as an intersection,we already have this...
+				intersections.add(Line.intersection(l, ray));   
+			}
+			for(int i=0;i<intersections.size();i++)
+			{
+			if( intersections.get(i).x<Math.max(p.get(i).x,p.get((i+1)%p.size()).x) && intersections.get(i).x>Math.min(p.get(i).x,p.get((i+1)%p.size()).x) && (Math.abs(intersections.get(i).x-criticalVertex.x)>0.0000001 || Math.abs(intersections.get(i).y-criticalVertex.y)>0.0000001))
+			{
+				validIntersections.add(intersections.get(i));
+			}
+			}
+			if(criticalVertex.x>x.x)   ////following if conditions removes non-valid intersection points where intersection happened before critical edge
+			{
+				for(int i=0;i<validIntersections.size();i++)
+				{
+					if(validIntersections.get(i).x<criticalVertex.x )
+					{
+						validIntersections.remove(i);
+						
+						i--;
+					}
+				}
+			}
+			else
+			{
+				for(int i=0;i<validIntersections.size();i++)
+				{
+					if(validIntersections.get(i).x>criticalVertex.x)
+					{
+						validIntersections.remove(i);
+						i--;
+					}
+				}
+			}
+			for(int i=0;i<validIntersections.size();i++)     /////////these two for blocks removes duplicates
+			{
+				for(int j=i+1;j<validIntersections.size();j++)
+				{
+					if(validIntersections.get(i).equals(validIntersections.get(j)))
+					{
+						validIntersections.remove(j);
+					
+					}
+				}
+			}
+		
+			return validIntersections;
+		
 	}
 
 
