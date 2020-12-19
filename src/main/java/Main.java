@@ -32,46 +32,34 @@
 		 * return counter;
 		 */
 
-import java.applet.Applet;
-import java.awt.Canvas;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.List;
-import javafx.scene.canvas.GraphicsContext;
-
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
-import javax.sound.midi.Soundbank;
 import javax.swing.JFrame;
-
-import java.lang.Math;
-import java.util.Arrays;
 public final class Main extends JFrame {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
 		
-		  Point2D.Double v1=new Double(346, 499);
-		  Point2D.Double v2=new Double(539, 511);
-		  Point2D.Double v3=new Double(544,365);
-		  Point2D.Double v4=new Double(666, 281);
-		  Point2D.Double v5=new Double(523, 190);
-		  Point2D.Double v6=new Double(743, 156);
-		  Point2D.Double v7=new Double(713, 302);
-		  Point2D.Double v8=new Double(862,406);
-		  Point2D.Double v9=new Double(883, 164);
-		  Point2D.Double v10=new Double(572, 104);
-		  Point2D.Double v11=new Double(411, 130);
-		  Point2D.Double v12=new Double(285,191);
-		  Point2D.Double v13=new Double(286, 364);
-		  Point2D.Double v14=new Double(373, 342);
-		  Point2D.Double v15=new Double(378, 246);
-		  Point2D.Double v16=new Double(473, 262);
-		  Point2D.Double v17=new Double(476, 356);
-		  Point2D.Double x=new Double(502,421);
+		  Point2D.Double v1=new Double(97, 47);
+		  Point2D.Double v2=new Double(290, 39);
+		  Point2D.Double v3=new Double(295,184);
+		  Point2D.Double v4=new Double(416, 265);
+		  Point2D.Double v5=new Double(274, 359);
+		  Point2D.Double v6=new Double(494, 392);
+		  Point2D.Double v7=new Double(464, 247);
+		  Point2D.Double v8=new Double(612,142);
+		  Point2D.Double v9=new Double(637, 383);
+		  Point2D.Double v10=new Double(323, 445);
+		  Point2D.Double v11=new Double(162, 416);
+		  Point2D.Double v12=new Double(36,356);
+		  Point2D.Double v13=new Double(36, 184);
+		  Point2D.Double v14=new Double(125, 205);
+		  Point2D.Double v15=new Double(129, 301);
+		  Point2D.Double v16=new Double(225, 286);
+		  Point2D.Double v17=new Double(226, 192);
+		  Point2D.Double x=new Double(252,125);
 
 		  ArrayList<Point2D.Double> p=new ArrayList<Point2D.Double>();
 		  p.add(v1);
@@ -93,16 +81,18 @@ public final class Main extends JFrame {
 		  p.add(v17);
 
 		 ArrayList<Point2D.Double> criticalVertecies=new ArrayList<Point2D.Double>();
-
+		 ArrayList<Integer> labels=new ArrayList<Integer>();
 
 		//checking if the first and last nodes are count as critical vertecies
 		 if(isCritical(x, p.get(0), p.get(p.size()-1), p.get(1)))
 		 {
 			 criticalVertecies.add(p.get(0));
+			 labels.add(labeling(x, p.get(0), p.get(p.size()-1),p.get(1)));
 		 }
 		 if(isCritical(x, p.get(p.size()-1), p.get(p.size()-2), p.get(0)))
 		 {
 			 criticalVertecies.add(p.get(p.size()));
+			 labels.add(labeling(x, p.get(p.size()-1), p.get(p.size()-2), p.get(0)));
 		 }
 
 		 for(int i=1;i<p.size()-1;i++)
@@ -110,14 +100,19 @@ public final class Main extends JFrame {
 			if(isCritical(x, p.get(i), p.get(i-1), p.get(i+1)))
 			{
 				criticalVertecies.add(p.get(i));
+				labels.add(labeling(x, p.get(i), p.get(i-1), p.get(i+1)));
 			}
 		 }
 //		 p = sortByTangent(p, x, false);
 	//	 ArrayList<Integer> labels = label_vertices(p, x , criticalVertecies);
 	//	 System.out.println(Arrays.toString(labels.toArray()));
-		 System.out.println(labeling(x,v16,v15,v17));
+		 for(int i=0;i<criticalVertecies.size();i++)
+		 {
+			 System.out.print(criticalVertecies.get(i)+"   "+labels.get(i));
+			 System.out.println();
+		 }
 		 DrawPolygon dp=new DrawPolygon(p,criticalVertecies,x);
-		 dp.main(p,criticalVertecies,x);
+	//	 dp.main(p,criticalVertecies,x);
 	//	 for(int i=0;i<criticalVertecies.size();i++)
 	//	 {
 	//		 intersectionPoints(p, criticalVertecies.get(i), x);
@@ -317,15 +312,15 @@ public final class Main extends JFrame {
 	public static int labeling(Point2D.Double x,Point2D.Double criticalVertex, Point2D.Double previousVertex, Point2D.Double nextVertex)
 	{
 		Boolean rightTurn=false;
-		Line PrToCr =new Line(previousVertex,criticalVertex);
-		rightTurn= (Math.signum(nextVertex.y-PrToCr.slope*nextVertex.x-PrToCr.Yintercept)>0);
-		System.out.println(rightTurn);
-		Line ray=new Line(x, criticalVertex);
-		int label= (int) Math.signum(previousVertex.y-ray.slope*previousVertex.x-ray.Yintercept);
+	
+		 ///Refer to https://math.stackexchange.com/questions/2121112/how-do-i-visualize-if-three-points-represent-a-right-or-left-turn
+		rightTurn= ((nextVertex.x-previousVertex.x)*(criticalVertex.y-previousVertex.y)-(nextVertex.y-previousVertex.y)*(criticalVertex.x-previousVertex.x)<0);  
+		///Refer to https://math.stackexchange.com/questions/274712/calculate-on-which-side-of-a-straight-line-is-a-given-point-located
+		int label= (int) Math.signum((previousVertex.x-x.x)*(criticalVertex.y-x.y)-(previousVertex.y-x.y)*(criticalVertex.x-x.x));
 		if(rightTurn)
-			return label;
-		else 
 			return -label;
+		else 
+			return label;
 	}
 	public static double distance(Point2D.Double a , Point2D.Double b){
 
