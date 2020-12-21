@@ -497,8 +497,166 @@ public final class Main extends JFrame {
 	
 	
 	
+	public static void segmentation(
+		ArrayList<Point2D.Double> polygon,
+		ArrayList<Point2D.Double> intersectionPoints,
+		ArrayList<Integer> intersectionLabels,
+		Point2D.Double transmiterCord 
+		){
+
+		//The code begins here
+
+		/* 
+		Writen: Ark1375
+
+		Instead of using the ray method described in the article, we going to perform a walk on the polygon to use it for segmentation
+		
+		* Verry Verry IMPORTANT:
+			Note that the intersection points (the points which the critical ray's intersect with other edges) and the critical vertecies
+			are all stored in an array called intersectionPoints and the coresponding labels are in intersectionLabels
+		*/
+
+		/* 
+		! Part A: - BEGIN-
+
+		First we need to find the beginning point of the walk
+		We will feed the 'intersctionPoints' function, the cordinates of the modem(transmiterCord) and an arbitary cordinate p1 such that
+		the line x,p1 is parallel to the X axsis.
+		With that we will calculate the beggining point of the walk that we name 'z' as in the article
+		
+		
+		*/
+		Point2D.Double p1 = new Point2D.Double(transmiterCord.x + 1 , transmiterCord.y);
+		ArrayList<Point2D.Double> intersectPoints = intersectionPoints (polygon , transmiterCord ,p1 );
+		
+		// the closest intersction point to the right of the 
+		double minDistance = 0;
+		Point2D.Double z = null;
+		// we need to compare the distance to each intersction point and compare them 1by1 to find the minimum distance, if it's the first
+		// point, there is no comparison, the comparison begins at the second intersction point.
+		boolean isTheFirstPoint = true; 
+		for (Point2D.Double tmpPoint : intersectPoints)	{
+			if (isTheFirstPoint){
+				isTheFirstPoint = false;
+				minDistance = distance(transmiterCord , tmpPoint);
+				z = tmpPoint;
+			}
+
+			else{
+				//The comparison part, finding the closest point
+				double dist = distance(transmiterCord , tmpPoint);
+				if (dist < minDistance){
+					minDistance = dist;
+					z = tmpPoint;
+				}
+			}
+		}
+		/* 
+		! Part A -END- 
+		*/
+		
+		/* 
+		! Part B: -BEGIN-
+			We have our beginning point, now we need to begin walking on the polygon,
+		*/
+		
+
+
+
+
+	}
+
+	public static ArrayList<Point2D.Double> getEdge(ArrayList<Point2D.Double> polygon , Point2D.Double point){
+
+		/* 
+			We itterate inside the array of verticies, chosing two consecutive points every time and checking if the point belongs to
+			coresponding line snipet or no
+		*/
+		
+		for (int i=0 ; i < polygon.size() ; i++){
+			
+			/* 
+				If we're on the last vertex, we should compare the last vertex to the first vertex, this is the first part of
+				the if condition, the second paart checks to see if the point belongs to the last edge of polygon or no 
+			*/
+			if (i == polygon.size() - 1 && pointBelongToSnipet(polygon.get(i) , polygon.get(0) , point)){
+				ArrayList<Point2D.Double> edge = new ArrayList<Point2D.Double>(2);
+				edge.add(0, polygon.get(i));
+				edge.add(1, polygon.get(0));
+				return edge; 
+			
+			}
+			/* 
+				If we're not on the last vertex, we should compare the current vertex to the next vertex, this is the first part of
+				the if condition, the second paart checks to see if the point belongs to the current edge of the polygon or no 
+			*/
+			else if (i != polygon.size() - 1 && pointBelongToSnipet(polygon.get(i) , polygon.get(i+1) , point)){
+				ArrayList<Point2D.Double> edge = new ArrayList<Point2D.Double>(2);
+				edge.add(0, polygon.get(i));
+				edge.add(1, polygon.get(0));
+				return edge; 
+			}
+			
+
+		}
+
+		return null;
+
+	}
 	
+	// Checks if C belongs to line snipet A-B
+	public static boolean pointBelongToSnipet(Point2D.Double pointA, Point2D.Double pointB , Point2D.Double pointC){
+
+		//Calculates the slope of the snipet A-B
+		double slope = ( pointA.y - pointB.y )/( pointA.x - pointB.x );
+		
+		//Puting point C in the line equation derive by A-B 
+		double lineValue = ( pointC.y - pointA.y) - slope * (pointC.x - pointA.x);
+		
+		//Calculates the distance of A-B, this will later use to check if C is actualy between A an B or not
+		double distanceEdge = distance(pointA, pointB);
+
+		//Calculates the distance between A-C
+		double distanceA_C = distance(pointA, pointC);
+
+		//Calculates the distance between C-B
+		double distanceC_B = distance(pointC , pointB);
+
+		/* If the lineValue is 0, in another word if line equation holds for C and the distance from A to C is equal to the sum of
+			distance from A to C and C to B, C is on the line snipet A-B
+			see the line below and you'll get it
+
+			A------------------C----------B
+		
+		*/
+		return (lineValue == 0 && distanceEdge == distanceA_C + distanceC_B);
+
+	}
+
+	public static ArrayList<Point2D.Double> sortUsingBeginningPoint(
+
+										ArrayList<Point2D.Double> polygon,
+										ArrayList<Point2D.Double> intersectionPoints,
+										Point2D.Double beginningPoint
+
+									){
+
+			
+
+		
 	
+		return null;
+
+	}
+
+	// Returns the label of a point in intersection points
+	public static int getLabel(
+			ArrayList<Point2D.Double> intersectionLabels,
+			ArrayList<Point2D.Double> intersectionPoints,
+			Point2D.Double point
+			){
+				return intersectionLabels.get( intersectionPoints.indexOf(point));
+			}
 
 
 }
