@@ -4,7 +4,17 @@ import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+
+
 public final class Main extends JFrame {
+	
+	// A more suited ds for keeping the segments
+	static class Segment{
+		public Point2D.Double beginningPoint;
+		public Point2D.Double endPoint;
+		public int label;
+	}
+
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -486,80 +496,8 @@ public final class Main extends JFrame {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public static void segmentation(
+	public static ArrayList<Segment> segmentation(
 		ArrayList<Point2D.Double> polygon,
 		ArrayList<Point2D.Double> intersectionPoints,
 		ArrayList<Integer> intersectionLabels,
@@ -622,12 +560,43 @@ public final class Main extends JFrame {
 			We have our beginning point, now we need to begin walking on the polygon,
 		*/
 		
+		// Finding the beginning edge
+		ArrayList<Point2D.Double> beginningEdge = getEdge(polygon, z);
+
+		Main.Segment initialSegment = new Main.Segment();
+		
+		initialSegment.beginningPoint = z;
+		initialSegment.endPoint = beginningEdge.get(1);
+		initialSegment.label = 0;
+
+		ArrayList<Main.Segment> segments = new ArrayList<Main.Segment>();
+		segments.add(initialSegment);
+
+		ArrayList<Point2D.Double> sortedIntersectPoints = sortUsingBeginningPoint(polygon, intersectionPoints, z);
+
+		for (int i=0 ; i < sortedIntersectPoints.size() ; i++){
+			Main.Segment newSegment = new Main.Segment();
+
+			newSegment.beginningPoint = segments.get(i).endPoint;
+			newSegment.endPoint = sortedIntersectPoints.get(i);
+			newSegment.label = segments.get(i).label + getLabel(intersectionLabels, intersectionPoints, sortedIntersectPoints.get(i));
+			
+			segments.add(newSegment);
+		}
+
+		/* 
+		! Part B: -END-
+		*/
+
+		return segments;
+
 
 
 
 
 	}
 
+	
 	public static ArrayList<Point2D.Double> getEdge(ArrayList<Point2D.Double> polygon , Point2D.Double point){
 
 		/* 
@@ -666,6 +635,37 @@ public final class Main extends JFrame {
 
 	}
 	
+	/* Using an edge, find all intersection points placed on that edge and returns them sorted with refrence to pointA */
+	public static ArrayList<Point2D.Double> getIntersectPointsUsingEdge(
+										Point2D.Double pointA , 
+										Point2D.Double pointB ,
+										ArrayList<Point2D.Double> intersectionPoints  ){
+		
+		ArrayList<Point2D.Double> intersectOnEdge = new ArrayList<Point2D.Double>();
+
+		for (Point2D.Double point : intersectionPoints){
+			if ( pointBelongToSnipet(pointA, pointB, point) )
+				intersectOnEdge.add(point);
+		}
+
+		//because im using pointA in a lambda expresion, I need a final version of it
+		final Point2D.Double _pointA = new Point2D.Double(pointA.x , pointA.y); 
+
+		intersectOnEdge.sort((p1 , p2)->{
+
+			if (distance(_pointA , p1) < distance(_pointA, p2))
+				return -1;
+			
+			else if (distance(_pointA , p1) == distance(_pointA, p2))
+				return 0;
+			
+			else return 1;
+
+		});
+
+		return intersectOnEdge;
+	}
+
 	// Checks if C belongs to line snipet A-B
 	public static boolean pointBelongToSnipet(Point2D.Double pointA, Point2D.Double pointB , Point2D.Double pointC){
 
@@ -695,6 +695,16 @@ public final class Main extends JFrame {
 
 	}
 
+	// Returns the label of a point in intersection points
+	public static int getLabel(
+			ArrayList<Integer> intersectionLabels,
+			ArrayList<Point2D.Double> intersectionPoints,
+			Point2D.Double point
+			){
+				return intersectionLabels.get( intersectionPoints.indexOf(point) );
+	}
+
+	// This function will maybe stuck inf-loop
 	public static ArrayList<Point2D.Double> sortUsingBeginningPoint(
 
 										ArrayList<Point2D.Double> polygon,
@@ -703,23 +713,68 @@ public final class Main extends JFrame {
 
 									){
 
-			
-
+		ArrayList<Point2D.Double> sortedIntersectionPoints = new ArrayList<Point2D.Double>();
 		
-	
-		return null;
+		// first we must find that the beginning point is on which edge
+		ArrayList<Point2D.Double> beginningEdge = getEdge(polygon, beginningPoint);
+		
+		// second we shold find the index of beginning edges starting vertex, if the beginning edge is A-B we must find A's index
+		int indexBeginningEdge = polygon.indexOf( beginningEdge.get(0) );
+
+		// Excess points from the rare case in the loop
+		ArrayList<Point2D.Double> excessPoints = new ArrayList<Point2D.Double>();
+		
+		for (int i = indexBeginningEdge ; (i < polygon.size() && i >= indexBeginningEdge) || i < indexBeginningEdge ; i++){
+			
+			ArrayList<Point2D.Double> curIntersections;
+
+			
+			if ( i == polygon.size()-1){
+				curIntersections = getIntersectPointsUsingEdge(polygon.get(i), polygon.get(0), intersectionPoints);
+				
+				i = 0;
+			}
+			else { 
+				curIntersections = getIntersectPointsUsingEdge(polygon.get(i), polygon.get(0), intersectionPoints);
+			}
+
+			/*
+			This is a rarae case where z, the beginning point is placed on an edge that contains more than one intersection point
+			*/
+			if (i == indexBeginningEdge && curIntersections.size() > 2){
+
+				for (Point2D.Double tempPoint : curIntersections){
+					double distBeginningPoint = distance(polygon.get(i) , beginningPoint);
+					double distTempPoint = distance(polygon.get(i) , tempPoint);
+
+					if (distBeginningPoint <= distTempPoint )
+						sortedIntersectionPoints.add(tempPoint);
+					
+					else
+						excessPoints.add(tempPoint);
+				}
+
+			}
+			else
+				sortedIntersectionPoints.addAll(curIntersections);
+
+		}
+
+		sortedIntersectionPoints.addAll(excessPoints);
+		
+										
+		return sortedIntersectionPoints;
 
 	}
 
-	// Returns the label of a point in intersection points
-	public static int getLabel(
-			ArrayList<Point2D.Double> intersectionLabels,
-			ArrayList<Point2D.Double> intersectionPoints,
-			Point2D.Double point
-			){
-				return intersectionLabels.get( intersectionPoints.indexOf(point));
-			}
+
+
+
+
+
+
 
 
 }
+
 
