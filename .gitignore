@@ -3,4 +3,6 @@
 /temp
 /file.txt
 /diff.txt
-
+/.classpath
+/.project
+.gitignore
