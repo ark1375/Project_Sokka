@@ -560,26 +560,25 @@ public final class Main extends JFrame {
 			We have our beginning point, now we need to begin walking on the polygon,
 		*/
 		
-		// Finding the beginning edge
-		ArrayList<Point2D.Double> beginningEdge = getEdge(polygon, z);
-
+		ArrayList<Point2D.Double> sortedIntersectPoints = sortUsingBeginningPoint(polygon, intersectionPoints, z);
+		
 		Main.Segment initialSegment = new Main.Segment();
 		
 		initialSegment.beginningPoint = z;
-		initialSegment.endPoint = beginningEdge.get(1);
+
+		initialSegment.endPoint = sortedIntersectPoints.get(0);
 		initialSegment.label = 0;
 
 		ArrayList<Main.Segment> segments = new ArrayList<Main.Segment>();
 		segments.add(initialSegment);
 
-		ArrayList<Point2D.Double> sortedIntersectPoints = sortUsingBeginningPoint(polygon, intersectionPoints, z);
 
-		for (int i=0 ; i < sortedIntersectPoints.size() ; i++){
+		for (int i=1 ; i < sortedIntersectPoints.size() ; i++){
 			Main.Segment newSegment = new Main.Segment();
 
-			newSegment.beginningPoint = segments.get(i).endPoint;
+			newSegment.beginningPoint = segments.get(i-1).endPoint;
 			newSegment.endPoint = sortedIntersectPoints.get(i);
-			newSegment.label = segments.get(i).label + getLabel(intersectionLabels, intersectionPoints, sortedIntersectPoints.get(i));
+			newSegment.label = segments.get(i-1).label + getLabel(intersectionLabels, intersectionPoints, sortedIntersectPoints.get(i));
 			
 			segments.add(newSegment);
 		}
@@ -651,7 +650,7 @@ public final class Main extends JFrame {
 		//because im using pointA in a lambda expresion, I need a final version of it
 		final Point2D.Double _pointA = new Point2D.Double(pointA.x , pointA.y); 
 
-		intersectOnEdge.sort((p1 , p2)->{
+		intersectOnEdge.sort( (p1 , p2)->{
 
 			if (distance(_pointA , p1) < distance(_pointA, p2))
 				return -1;
@@ -766,14 +765,6 @@ public final class Main extends JFrame {
 		return sortedIntersectionPoints;
 
 	}
-
-
-
-
-
-
-
-
 
 }
 
